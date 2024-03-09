@@ -76,7 +76,7 @@ Route::get('/', function () {
 });
 
 Route::get('/tasks', function () {
-    return view('index', ['tasks' => Task::latest()->get()]);
+    return view('index', ['tasks' => Task::latest()->paginate(10)]);
 })->name('tasks.index');
 
 Route::view('/tasks/create', 'create')->name('tasks.create');
@@ -85,6 +85,18 @@ Route::get('/tasks/{task}/edit', function (Task $task) {
 
     return view('edit', ['task' => $task]);
 })->name('tasks.edit');
+
+Route::put('/tasks/{task}/toggle',function (Task $task){
+    $task->toggle();
+
+    return redirect()->back()->with('success' , 'Task updated successfully!');
+})->name('tasks.toggle');
+
+Route::delete('/tasks/{task}', function (Task $task) {
+    $task->delete();
+
+    return redirect()->route('tasks.index')->with('success' , 'Task deleted successfully!');
+})->name('tasks.destroy');
 
 Route::get('/tasks/{task}', function (Task $task) {
 
